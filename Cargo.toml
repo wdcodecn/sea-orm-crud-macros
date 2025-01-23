@@ -1,0 +1,14 @@
+[package]
+name = "sea-orm-crud-macros"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+darling = "0.20.10"
+proc-macro2 = "1.0.37"
+quote = "1.0.35"
+syn = { version = "2.0.15", features = ["full", "extra-traits"] }
+
+[lib]
+proc-macro = true
+
