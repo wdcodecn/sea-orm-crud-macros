@@ -47,8 +47,9 @@ impl ActiveModelBehavior for ActiveModel {}
 
 ### Expand Code Here
 ```rust
+
 #[derive(Debug)]
-struct PageOption {
+pub struct PageOption {
     page: u64,
     page_size: u64,
 }
@@ -62,7 +63,7 @@ impl Default for PageOption {
     }
 }
 #[derive(Debug)]
-struct SortOption {
+pub struct SortOption {
     name: Column,
     desc: bool,
 }
@@ -86,6 +87,8 @@ pub struct OptionModel {
     pub page_option: Option<PageOption>,
 }
 use sea_orm::ActiveValue::Set;
+use sea_orm::ItemsAndPagesNumber;
+use sea_orm::QueryOrder;
 pub struct Service {}
 impl Service {
     pub async fn insert_one(db: &DbConn, x: ActiveModel) -> Result<Model, DbErr> {
@@ -123,7 +126,7 @@ impl Service {
         let page_option = x.page_option.unwrap_or_default();
         let paginator = query.paginate(db, page_option.page_size);
         let page: ItemsAndPagesNumber = paginator.num_items_and_pages().await?;
-        let data = paginator.fetch_page(page_option.page).await?;
+        let data = paginator.fetch_page(page_option.page - 1).await?;
         Ok((data, page))
     }
     pub async fn get_by_created_at(
@@ -138,6 +141,7 @@ impl Service {
             page_option,
             ..Default::default()
         })
+            .await
     }
     pub async fn update_created_at(
         db: &DbConn,
@@ -163,6 +167,7 @@ impl Service {
             page_option,
             ..Default::default()
         })
+            .await
     }
     pub async fn update_updated_at(
         db: &DbConn,
@@ -188,6 +193,7 @@ impl Service {
             page_option,
             ..Default::default()
         })
+            .await
     }
     pub async fn update_password(db: &DbConn, id: i32, password: String) -> Result<Model, DbErr> {
         let x = ActiveModel {
@@ -209,6 +215,7 @@ impl Service {
             page_option,
             ..Default::default()
         })
+            .await
     }
     pub async fn update_name(db: &DbConn, id: i32, name: String) -> Result<Model, DbErr> {
         let x = ActiveModel {
@@ -222,4 +229,5 @@ impl Service {
 
 
 ```
+
 
